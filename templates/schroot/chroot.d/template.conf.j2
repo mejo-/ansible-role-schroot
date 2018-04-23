@@ -1,0 +1,15 @@
+[{{ item.name }}]
+description={{ item.description|d(item.name) }}
+type={{ item.type|d('directory') }}
+{% if item.type|d('directory') == 'directory' %}
+directory={{ item.location|d(schroot_location + '/' + item.name) }}
+{% endif %}
+{% if item.users is defined %}
+users={{ item.users|join(',') }}
+{% endif %}
+{% if item.groups is defined %}
+groups={{ item.groups|join(',') }}
+{% endif %}
+{% if item.root_groups is defined %}
+root-groups={{ item.root_groups|join(',') }}
+{% endif %}

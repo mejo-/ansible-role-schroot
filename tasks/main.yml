@@ -1,0 +1,40 @@
+---
+
+- name: install schroot
+  apt:
+    pkg: "{{ item }}"
+    state: present
+  with_items:
+    - debootstrap
+    - schroot
+
+- name: write configuration of chroots
+  template:
+    src: schroot/chroot.d/template.conf.j2
+    dest: "/etc/schroot/chroot.d/{{ item.name }}.conf"
+    owner: root
+    group: root
+    mode: 0644
+  with_items: "{{ schroot_chroots }}"
+
+- name: create directories for chroots
+  file:
+    path: "{{ item.location|d(schroot_location + '/' + item.name) }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  with_items: "{{ schroot_chroots }}"
+  when: "item.type|d('directory') == 'directory'"
+  register: __schroot_chroot_dirs
+
+- name: create chroots
+  command: >
+    debootstrap --arch={{ item.item.arch|d('amd64') }}
+      {{ item.item.check_gpg|default(True)|ternary('', '--no-check-gpg') }}
+      {{ item.item.suite }} {{ item.location|d(schroot_location + '/' + item.item.name) }}
+      {{ item.item.mirror|d('http://deb.debian.org/debian') }}
+  with_items: "{{ __schroot_chroot_dirs.results }}"
+  when:
+    - "item.item.type|d('directory') == 'directory'"
+    - "item.changed"
