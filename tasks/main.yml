@@ -8,6 +8,27 @@
     - debootstrap
     - schroot
 
+- name: create directory for custom schroot profiles
+  file:
+    path: "/etc/schroot/{{ item.path }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  with_filetree: 'schroot/profiles/'
+  when: item.state == 'directory'
+
+- name: copy config files for custom schroot profiles
+  copy:
+    src: "schroot/profiles/{{ item.path }}"
+    dest: "/etc/schroot/{{ item.path }}"
+    owner: root
+    group: root
+    mode: 0644
+    directory_mode: 0755
+  with_filetree: 'schroot/profiles/'
+  when: item.state == 'file'
+
 - name: write configuration of chroots
   template:
     src: schroot/chroot.d/template.conf.j2

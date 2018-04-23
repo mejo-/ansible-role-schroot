@@ -4,6 +4,9 @@ type={{ item.type|d('directory') }}
 {% if item.type|d('directory') == 'directory' %}
 directory={{ item.location|d(schroot_location + '/' + item.name) }}
 {% endif %}
+{% if item.profile is defined %}
+profile={{ item.profile }}
+{% endif %}
 {% if item.users is defined %}
 users={{ item.users|join(',') }}
 {% endif %}
