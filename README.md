@@ -15,12 +15,19 @@ schroot_location: /srv/chroot
 #     type: directory                           # default: directory
 #     users: frankie                            # default: empty
 #     groups: schroot                           # default: empty
-#     root_users: alice,bob                     # default: empty
-#     root_groups: alice,bob                    # default: empty
+#     root_users:                               # default: empty
+#       - alice
+#       - bob
+#     root_groups:                              # default: empty
+#       - alice
+#       - bob
 #     arch: amd64                               # default: amd64
 #     suite: lenny                              # required, no default
 #     mirror: http://deb.debian.org/debian      # default: http://deb.debian.org/debian
 #     check_gpg: True                           # default: True
+#     packages:                                 # default: empty
+#       - pck1
+#       - pck2
 schroot_chroots: []
 ```
 

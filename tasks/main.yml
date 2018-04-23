@@ -38,3 +38,12 @@
   when:
     - "item.item.type|d('directory') == 'directory'"
     - "item.changed"
+
+- name: install packages in chroots
+  command: >
+    chroot {{ item.location|d(schroot_location + '/' + item.name) }}
+      apt-get install --no-install-recommends --yes
+      {{ item.check_gpg|default(True)|ternary('', '--force-yes') }}
+      {{ item.packages|join(' ') }}
+  with_items: "{{ schroot_chroots }}"
+  when: "item.packages is defined"
